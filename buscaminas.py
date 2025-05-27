@@ -15,10 +15,55 @@ def existe_archivo(ruta_directorio: str, nombre_archivo:str) -> bool:
     return os.path.exists(os.path.join(ruta_directorio, nombre_archivo))
 
 def colocar_minas(filas:int, columnas: int, minas:int) -> list[list[int]]:
-    return [[]]
+    i:int = 0
+    pos_ocupadas = []
+    #Aca se generan las posiciones aleatorias donde van a haber minas
+    while i < minas:
+        nueva_pos = (random.randint(0, filas-1), random.randint(0, columnas-1))
+        if nueva_pos not in pos_ocupadas:
+            pos_ocupadas.append(nueva_pos)
+            i += 1
+    
+    #Aca se genera la matriz considerando las posiciones anteriormente generadas!
+    nueva_matriz:list[list[int]]  = []
+    for c in range(columnas):
+        nueva_fila: list[int] = []
+        for f in range(filas):
+            if (f,c) in pos_ocupadas:
+                nueva_fila.append(-1)
+            else:
+                nueva_fila.append(0)
+        nueva_matriz.append(nueva_fila)
+    
+    return nueva_matriz
 
+#PREGUNTAR SI ES NECESARIO USARLA EN colocar_minas()
+def es_matriz(m:list[list[int]]) -> bool:
+    r:bool = True
+    i:int = 0
+    while i < (len(m)-1) and r:
+        if len(m[i]) != len(m[i+1]):
+            r = False
+        i += 1
+    return r
+
+def chequear_alrededor(tablero: list[list[int]], f: int, c: int) -> int:
+    contador: int = 0
+    print("alrededor de ", f,c)
+    for x in range(f-1, f+2):
+        for y in range(c-1, c+2):
+            print("chequeando", x, y)
+            if x > -1 and y > -1 and x < len(tablero[0]) and y < len(tablero):
+                if tablero[x][y] == -1:
+                    contador += 1                
+    return contador
+        
 
 def calcular_numeros(tablero: list[list[int]]) -> None:
+    for c in range(len(tablero)):
+        for f in range(len(tablero[c])):
+            if tablero[f][c] != -1:
+                tablero[f][c] = chequear_alrededor(tablero, f, c)
     return
 
 
