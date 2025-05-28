@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May 28 13:41:39 2025
+
+@author: Estudiante
+"""
+
 import random
 from typing import Any
 import os
@@ -49,10 +57,8 @@ def es_matriz(m:list[list[int]]) -> bool:
 
 def chequear_alrededor(tablero: list[list[int]], f: int, c: int) -> int:
     contador: int = 0
-    print("alrededor de ", f,c)
     for x in range(f-1, f+2):
         for y in range(c-1, c+2):
-            print("chequeando", x, y)
             if x > -1 and y > -1 and x < len(tablero[0]) and y < len(tablero):
                 if tablero[x][y] == -1:
                     contador += 1                
@@ -68,7 +74,24 @@ def calcular_numeros(tablero: list[list[int]]) -> None:
 
 
 def crear_juego(filas:int, columnas:int, minas:int) -> EstadoJuego:
+    r: EstadoJuego = {}
+    r['filas'] = filas
+    r['columnas'] = columnas
+    r['minas'] = minas
+    r['tablero_visible'] = crear_tablero_visible_VACIO(filas, columnas)
+    
     return {}
+
+def crear_tablero_visible_VACIO(filas: int, columnas:int) -> list[list[str]]:
+    res: list[list[str]] = []
+    fila: list[str] = []
+    for j in range(columnas): 
+        fila.append(VACIO)
+    for i in range(filas) :
+        res.append(fila)
+    
+    return res 
+        
 
 
 def obtener_estado_tablero_visible(estado: EstadoJuego) -> list[list[str]]:
