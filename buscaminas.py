@@ -79,8 +79,9 @@ def crear_juego(filas:int, columnas:int, minas:int) -> EstadoJuego:
     r['columnas'] = columnas
     r['minas'] = minas
     r['tablero_visible'] = crear_tablero_visible_VACIO(filas, columnas)
+    r['juego_terminado'] = False
     
-    return {}
+    return r
 
 def crear_tablero_visible_VACIO(filas: int, columnas:int) -> list[list[str]]:
     res: list[list[str]] = []
@@ -90,20 +91,68 @@ def crear_tablero_visible_VACIO(filas: int, columnas:int) -> list[list[str]]:
     for i in range(filas) :
         res.append(fila)
     
-    return res 
-        
+    return res
 
+# <-----
+# def estado_valido(estado: EstadoJuego) -> bool:
+#     return False
+#
+# def estructura_y_tipos_validos(estado: EstadoJuego) -> Bool:
+#     ret = True
+#     if estado['filas'] < 1 or estado['columnas'] < 1 or estado['minas'] < 1 or estado['minas'] < estado['filas']*estado['columnas']:
+#         ret = False
+#     return ret
+# -----> Estas funciones solo sirven si fuesemos muy boludos y la cagaramos en otra funcion, se pueden implementar despues, son una paja (_)_)========D
+
+def todas_celdas_seguras_descubiertas(tablero: list[list[int]], tablero_visible: list[list[str]]) -> bool:
+    res: bool = True
+    for f in range(tablero):
+        for c in range(tablero[f]):
+            if tablero[f][c] == -1:
+                if tablero_visible[f][c] != VACIO and tablero_visible[f][c] != BANDERA:
+                    res = False
+            elif tablero[f][c] != tablero_visible[f][c]:
+                res = False
+    return res
 
 def obtener_estado_tablero_visible(estado: EstadoJuego) -> list[list[str]]:
-    return [[]]
+    res = estado['tablero_visible']
+    return res
 
 
 def marcar_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
+    if (not estado['juego_terminado']) and (estado['tablero_visible'][fila][columna] == BANDERA or estado['tablero_visible'][fila][columna] == VACIO):
+        if estado['tablero_visible'][fila][columna] == BANDERA:
+            estado['tablero_visible'][fila][columna] = VACIO
+        elif estado['tablero_visible'][fila][columna] == VACIO:
+            estado['tablero_visible'][fila][columna] = BANDERA
     return
 
 
 def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
+    if not estado['juego_terminado']:
+        if estado['tablero'][fila][columna] == -1:
+            estado['juego_terminado'] = True
+            marcar_bombas(estado['tablero_visible'], estado['tablero'])
+        else:
+            if todas_celdas_seguras_descubiertas(estado['tablero'], estado['tablero_visible']):
+                estado['juego_terminado'] = True
+            #Falta implementar caminos_descubiertos() en el else!!!!! <---- IMPORTANTE
     return
+
+def caminos_descubiertos(tablero: list[list[int]], tablero_visible: list[list[str]], f: int, c: int) -> list[list[(int, int)]]:
+    # la definicion de esta funcion es medio confusa, pero lo que tiene que hacer es devolver todas las posiciones que rodeen una posicion
+    # que tenga valor 0hasta que llegue a una que tenga valor >0, es para que funcione como en el bucaminas que cuando tocas una celda
+    # se rompen muchas porque no hay ninguna bomba alrededor, la peor explicacion del mundo, cualquier cosa pregunta !
+    return [[]]
+
+
+def marcar_bombas(tablero_visible: list[list[str]], tablero: list[list[str]]) -> None:
+    for f in tablero_visible:
+        for c in tablero_visible:
+            if tablero[f][c] == -1:
+                tablero_visible[f][c] = BOMBA
+    return 
 
 
 def verificar_victoria(estado: EstadoJuego) -> bool:
