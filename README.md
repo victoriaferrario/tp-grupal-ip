@@ -1,12 +1,12 @@
 # Trabajo Práctico IP :P
 
-##Ejercicio 1 
+## Ejercicio 1 
 Preguntar si es necesario si es necesaria # es matriz porque solo se usa una vez 
 
-##Ejercicio 2 
+## Ejercicio 2 
 filas y columnas confundidas en chequear y en calcular 
 
-##Ejercicio 3 
+## Ejercicio 3 
 Falta el estado del tablero pero como eso va cambiando (?) 
 el tablero ya tiene que estar con los numeritos alrededor 
 
