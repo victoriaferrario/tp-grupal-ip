@@ -1,17 +1,18 @@
-## Trabajo Práctico IP :P
+# Trabajo Práctico IP :P
 
-## EJERCICIO 1
-
-es_matriz = verifica que la lista de listas ingresada sea una matriz, es decir que todas las filas contengan el mismo n'umero de elementos
-
-colocar_minas
-
-
-
-## preguntas clase miercoles 28
-
-Ejercicio 1 
+##Ejercicio 1 
 Preguntar si es necesario si es necesaria # es matriz porque solo se usa una vez 
 
-Ejercicio 2 
-modular una funci'on aparte que chequee si hay una posicion circundante que sea -1
+##Ejercicio 2 
+filas y columnas confundidas en chequear y en calcular 
+
+##Ejercicio 3 
+Falta el estado del tablero pero como eso va cambiando (?) 
+el tablero ya tiene que estar con los numeritos alrededor 
+
+las que parecen al pedo por ahí lo son pero están en el documento principal osea hay que hacerlas 
+
+cambio función de tablero vacio porque sino lo trata como todo una sola fila y se rompe en marcar celda
+
+## Ejercicio 4 
+return sacar porque es inout
