@@ -150,30 +150,27 @@ def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
             marcar_bombas(estado['tablero_visible'], estado['tablero'])
             estado['juego_terminado'] = True
         else:
-            aux: list[tuple(int, int)] = caminos_descubiertos(estado['tablero'], estado['tablero_visible'], fila, columna)
+            aux: list[tuple[int,int]] = caminos_descubiertos(estado['tablero'], estado['tablero_visible'], fila, columna)
             print(aux)
             for (f,c) in aux:
-                estado['tablero_visible'][f][c] = estado['tablero'][f][c]
+                estado['tablero_visible'][f][c] = str(estado['tablero'][f][c])
             if todas_celdas_seguras_descubiertas(estado['tablero'], estado['tablero_visible']):
                 estado['juego_terminado'] = True
     return
 
-
-
 def caminos_descubiertos(tablero: list[list[int]], tablero_visible: list[list[str]], f: int, c: int) -> list[list[(int, int)]]:
-    camino: list[tuple(int,int)] = []
+    camino: list[tuple[int,int]] = [] 
     return caminos_descubiertos_rec(tablero, tablero_visible, f, c, camino)
 
 def caminos_descubiertos_rec(tablero: list[list[int]], tablero_visible: list[list[str]], f: int, c: int, camino: list[list[(int, int)]]) -> list[list[(int, int)]]:
-    if tablero_visible [f][c] != BANDERA:
+    if tablero_visible [f][c] != BANDERA :
         camino.append((f,c))
         if chequear_alrededor(tablero, f, c) == 0 : 
             for x in range(f-1, f+2):
                 for y in range(c-1, c+2):
                     if x > -1 and y > -1 and x < len(tablero) and y < len(tablero[0]) and ((x,y) not in camino):
-                        camino += caminos_descubiertos_rec(tablero, tablero_visible, x, y, camino)
+                        caminos_descubiertos_rec(tablero, tablero_visible, x, y, camino)
     return camino
-
 
 def marcar_bombas(tablero_visible: list[list[str]], tablero: list[list[str]]) -> None:
     for f in tablero_visible:
