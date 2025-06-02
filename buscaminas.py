@@ -8,6 +8,7 @@ Created on Wed May 28 13:41:39 2025
 
 import random
 from typing import Any
+from typing import TextIO
 import os
 
 # Constantes para dibujar
@@ -80,12 +81,13 @@ def crear_juego(filas:int, columnas:int, minas:int) -> EstadoJuego:
     r['columnas'] = columnas
     r['minas'] = minas
     r['tablero_visible'] = crear_tablero_visible_VACIO(filas, columnas)
-    r['juego_terminado'] = False
+    
     y = colocar_minas(filas, columnas, minas)
     calcular_numeros(y)
     r['tablero'] = y
-    return r
+    r['juego_terminado'] = False
 
+    return r
 
 
 def crear_tablero_visible_VACIO(filas: int, columnas:int) -> list[list[str]]:
@@ -98,17 +100,6 @@ def crear_tablero_visible_VACIO(filas: int, columnas:int) -> list[list[str]]:
     
     return res
 
-# #-------------------------
-# y = colocar_minas(4,3,1)
-# calcular_numeros(y)
-# estado = crear_juego(4,3,1)
-# #-------------------------
-    
-   # enteros_valid = estado['filas'] > 0 and estado['columnas'] > 0 and estado['minas'] > 0 and estado['minas'] < (estado['columnas'] * estado['filas'])
-    #juego_valid = type(estado['juego_terminado'] == bool)
-   # matrices_valid = es_matriz(estado['tablero']) and es_matriz(estado['tablero_visible'])
-    
-    
 # <-----
 # def estado_valido(estado: EstadoJuego) -> bool:
 #     return False
@@ -127,7 +118,7 @@ def todas_celdas_seguras_descubiertas(tablero: list[list[int]], tablero_visible:
             if tablero[f][c] == -1:
                 if tablero_visible[f][c] != VACIO and tablero_visible[f][c] != BANDERA:
                     res = False
-            elif tablero[f][c] != tablero_visible[f][c]:
+            elif str(tablero[f][c]) != tablero_visible[f][c]:
                 res = False
     return res
 
@@ -146,12 +137,12 @@ def marcar_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
 
 def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
     if not estado['juego_terminado']:
-        if estado['tablero'][fila][columna] == -1:
+        if estado['tablero'][fila][columna] == -1 and estado['tablero_visible'][fila][columna] != BANDERA:
             marcar_bombas(estado['tablero_visible'], estado['tablero'])
             estado['juego_terminado'] = True
         else:
             aux: list[tuple[int,int]] = caminos_descubiertos(estado['tablero'], estado['tablero_visible'], fila, columna)
-            print(aux)
+            # print(aux)
             for (f,c) in aux:
                 estado['tablero_visible'][f][c] = str(estado['tablero'][f][c])
             if todas_celdas_seguras_descubiertas(estado['tablero'], estado['tablero_visible']):
@@ -160,37 +151,124 @@ def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
 
 def caminos_descubiertos(tablero: list[list[int]], tablero_visible: list[list[str]], f: int, c: int) -> list[list[(int, int)]]:
     camino: list[tuple[int,int]] = [] 
-    return caminos_descubiertos_rec(tablero, tablero_visible, f, c, camino)
+    return recursion_caminos_descubiertos(tablero, tablero_visible, f, c, camino)
 
-def caminos_descubiertos_rec(tablero: list[list[int]], tablero_visible: list[list[str]], f: int, c: int, camino: list[list[(int, int)]]) -> list[list[(int, int)]]:
+def recursion_caminos_descubiertos(tablero: list[list[int]], tablero_visible: list[list[str]], f: int, c: int, camino: list[list[(int, int)]]) -> list[list[(int, int)]]:
     if tablero_visible [f][c] != BANDERA :
         camino.append((f,c))
         if chequear_alrededor(tablero, f, c) == 0 : 
             for x in range(f-1, f+2):
                 for y in range(c-1, c+2):
                     if x > -1 and y > -1 and x < len(tablero) and y < len(tablero[0]) and ((x,y) not in camino):
-                        caminos_descubiertos_rec(tablero, tablero_visible, x, y, camino)
+                        recursion_caminos_descubiertos(tablero, tablero_visible, x, y, camino)
     return camino
 
 def marcar_bombas(tablero_visible: list[list[str]], tablero: list[list[str]]) -> None:
-    for f in tablero_visible:
-        for c in tablero_visible[f]:
+    for f in range (len(tablero_visible)):
+        for c in range (len(tablero_visible[f])):
             if tablero[f][c] == -1:
                 tablero_visible[f][c] = BOMBA
     return 
 
-
 def verificar_victoria(estado: EstadoJuego) -> bool:
-    return True
-
+    return todas_celdas_seguras_descubiertas(estado['tablero'],estado['tablero_visible'])
 
 def reiniciar_juego(estado: EstadoJuego) -> None:
+    # porque no funciona esto 
+    # estado = crear_juego(estado['filas'], estado['columnas'], estado['minas'])
+    filas = estado['filas'] 
+    columnas = estado['columnas'] 
+    minas = estado['minas']
+    estado['tablero_visible'] = crear_tablero_visible_VACIO(filas, columnas)
+    y = colocar_minas(filas, columnas, minas)
+    calcular_numeros(y)
+    estado['tablero'] = y
+    estado['juego_terminado'] = False
+
     return
 
 
 def guardar_estado(estado: EstadoJuego, ruta_directorio: str) -> None:
+    archivo_tablero: TextIO = open(generar_ruta(ruta_directorio, 'tablero.txt'), 'w')
+    archivo_tablero_visible: TextIO  = open(generar_ruta(ruta_directorio, 'tablero_visible.txt'),'w')
+    
+    archivo_tablero.write(tableros_a_strings(estado, estado['tablero']))
+    archivo_tablero_visible.write(tableros_a_strings(estado, estado['tablero_visible']))
+    
+    archivo_tablero.close()
+    archivo_tablero_visible.close()
     return
+
+def tableros_a_strings(estado: EstadoJuego, tablero:list[list[any]]) -> str: 
+    res: str = str()
+    for f in range (len(tablero)):
+        for c in range(len(tablero[0])):
+            if tablero == estado['tablero_visible']:
+                if tablero[f][c] == BANDERA: 
+                    res += '*'
+                else: 
+                    if tablero[f][c] == VACIO: 
+                        res += '?'
+                    else:  res += tablero[f][c]
+            else: 
+                res += str(tablero[f][c])
+                
+            if c == len(tablero[0])-1: #último elemento de la fila 
+                res += '\n'
+            else: res += ','
+    return res 
+
+def generar_ruta(ruta_directorio:str, nombre_archivo:str):
+    return os.path.join(ruta_directorio,nombre_archivo)
+
+
 
 
 def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:
+    if os.path.exists(generar_ruta(ruta_directorio, 'tablero.txt')) and os.path.exists(generar_ruta(ruta_directorio, 'tablero_visible.txt')):
+        archivo_tablero: TextIO = open(generar_ruta(ruta_directorio, 'tablero.txt'), 'r')
+        archivo_tablero_visible: TextIO  = open(generar_ruta(ruta_directorio, 'tablero_visible.txt'),'r')
+        
+        tablero_archivo = archivo_tablero.read()
+        tablero_visible_archivo = archivo_tablero_visible.read()
+        
+        
+        archivo_tablero.close()
+        archivo_tablero_visible.close()
+    else: False 
     return False
+
+
+# AUX Ejercicio 10 
+def archivo_valido(estado: EstadoJuego, archivo: str, tablero: list[list[any]]) -> bool: 
+    res: bool= True 
+    cont_lineas: int= 0
+    if (contar_apariciones(archivo, ',') == estado['columnas'] - 1) and contar_apariciones(archivo, '\n') == estado['filas']:
+    return valido
+    
+def leer_archivo(ruta_directorio: str, nombre_archivo): 
+    archivo: TextIO = open(generar_ruta(ruta_directorio, nombre_archivo), 'r')
+    texto = archivo.read()
+    archivo.close()
+    return texto 
+
+# AUX Ejercicio 10 -> quiero contar las comas y los \n (apariciones de dos chars)
+# itero por s y por x a la vez si encuentro una coincidencia
+def contar_apariciones(s:str, x:str):
+    cont: int = 0
+    i = 0
+    while i < len(s):
+        j = 0
+        if s[i] != x[j]: i += 1
+        else:   
+            while j < len(x) and s[i] == x[j]:
+                j += 1
+                i += 1
+            if j == len(x): cont +=1
+    return cont
+
+
+
+# la ponen como recomendación
+def existe_archivo(ruta_directorio:str, nombre_archivo:str) -> bool: 
+    return True
