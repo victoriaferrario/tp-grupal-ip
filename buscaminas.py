@@ -228,19 +228,28 @@ def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:
     if os.path.exists(generar_ruta(ruta_directorio, 'tablero.txt')) and os.path.exists(generar_ruta(ruta_directorio, 'tablero_visible.txt')):
         archivo_tablero: TextIO = open(generar_ruta(ruta_directorio, 'tablero.txt'), 'r')
         archivo_tablero_visible: TextIO  = open(generar_ruta(ruta_directorio, 'tablero_visible.txt'),'r')
+        if not dimensiones_validas(estado, archivo_tablero) or not dimensiones_validas(estado, archivo_tablero_visible):
+            res = False
+        
         
     else: 
         res = False 
     return False
 
+def quitar_lineas_vacias(texto: list[str]) -> list[str]:
+    res: list[str] = []
+    for l in texto:
+        if len(l) > 0:
+            res.append(l)
+    return res
 
 # AUX Ejercicio 10 
-def archivo_valido(estado: EstadoJuego, archivo: TextIO, tablero: list[list[any]]) -> bool: 
+def dimensiones_validas(estado: EstadoJuego, archivo: TextIO) -> bool: 
     res: bool = True 
-    cont_lineas: int = 0
-    contenido = archivo.read()
-    if (contar_apariciones(archivo, ',') == estado['columnas'] - 1) and contar_apariciones(archivo, '\n') == estado['filas']:
-        #
+    contenido = quitar_lineas_vacias(archivo.readlines())
+    for l in contenido:
+        if contar_apariciones(l, ',') != (estado['columnas'] - 1) or len(contenido) != estado['filas']:
+            res = False
     return res
     
 # def leer_archivo(ruta_directorio: str, nombre_archivo): 
@@ -251,6 +260,7 @@ def archivo_valido(estado: EstadoJuego, archivo: TextIO, tablero: list[list[any]
 
 # AUX Ejercicio 10 -> quiero contar las comas y los \n (apariciones de dos chars)
 # itero por s y por x a la vez si encuentro una coincidencia
+
 def contar_apariciones(s:str, x:str):
     cont: int = 0
     i = 0
