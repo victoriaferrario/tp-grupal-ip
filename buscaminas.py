@@ -174,16 +174,16 @@ def verificar_victoria(estado: EstadoJuego) -> bool:
     return todas_celdas_seguras_descubiertas(estado['tablero'],estado['tablero_visible'])
 
 def reiniciar_juego(estado: EstadoJuego) -> None:
-    # porque no funciona esto 
-    # estado = crear_juego(estado['filas'], estado['columnas'], estado['minas'])
-    filas = estado['filas'] 
-    columnas = estado['columnas'] 
-    minas = estado['minas']
-    estado['tablero_visible'] = crear_tablero_visible_VACIO(filas, columnas)
-    y = colocar_minas(filas, columnas, minas)
-    calcular_numeros(y)
-    estado['tablero'] = y
-    estado['juego_terminado'] = False
+    estado = crear_juego(estado['filas'], estado['columnas'], estado['minas'])
+    # filas = estado['filas'] 
+    # columnas = estado['columnas'] 
+    # minas = estado['minas']
+    # estado['tablero_visible'] = crear_tablero_visible_VACIO(filas, columnas)
+    # y = colocar_minas(filas, columnas, minas)
+    # calcular_numeros(colocar_minas(filas, columnas, minas))
+    # estado['tablero'] = calcular_numeros(colocar_minas(filas, columnas, minas))
+
+    # estado['juego_terminado'] = False
 
     return
 
@@ -221,6 +221,45 @@ def tableros_a_strings(estado: EstadoJuego, tablero:list[list[any]]) -> str:
 def generar_ruta(ruta_directorio:str, nombre_archivo:str):
     return os.path.join(ruta_directorio,nombre_archivo)
 
+def string_a_matriz(archivo: TextIO) -> list[list[int]]:
+    texto: list[str] = archivo.readlines()
+    m: list[list[int]] = []
+    for l in texto:
+        char: str = ''
+        linea: list = []
+        for c in range(len(l)):
+            if l[c] == ',' or c == len(l)-1 :
+                if c == len(l)-1:
+                    char += l[c]
+                linea.append(char)
+                char = ''
+            else:
+                char += l[c]
+        m.append(linea)
+    return m
+
+def tablero_valido(archivo: TextIO) -> bool:
+    res: bool = True
+    hayBomba: bool = False
+    tablero = string_a_matriz(archivo)
+    for f in range(len(tablero)):
+        if '-1' in tablero[f]:
+            hayBomba = True
+        for i in range(len(tablero[f])):
+            if tablero[f][i] != '-1':
+                if tablero[f][i] != str(chequear_alrededor(tablero, f, i)):
+                    res = False
+    return (res and hayBomba)
+
+def tablero_visible_valido(archivo: TextIO) -> bool:
+    res: bool = True
+    texto: list[str] = archivo.readlines()
+    tablero_visible: list[list[int]] = []
+    for l in texto:
+        tablero_visible.append(l.split(","))
+    
+    return res
+
 
 def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:
     res: bool = True
@@ -231,10 +270,11 @@ def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:
         if not dimensiones_validas(estado, archivo_tablero) or not dimensiones_validas(estado, archivo_tablero_visible):
             res = False
         
-        
+        archivo_tablero.close()
+        archivo_tablero_visible.close()
     else: 
         res = False 
-    return False
+    return res
 
 def quitar_lineas_vacias(texto: list[str]) -> list[str]:
     res: list[str] = []

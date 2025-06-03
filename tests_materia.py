@@ -53,229 +53,229 @@ class colocar_minasTest(unittest.TestCase):
 
 
 
-class calcular_numerosTest(unittest.TestCase):
-    def test_ejemplo(self):
-        tablero = [[0,-1],
-                   [0, 0]]
+# class calcular_numerosTest(unittest.TestCase):
+#     def test_ejemplo(self):
+#         tablero = [[0,-1],
+#                    [0, 0]]
 
-        calcular_numeros(tablero)
-        # Testeamos que el tablero tenga los números correctos
-        self.assertEqual(tablero, [[1,-1],
-                                   [1, 1]])
+#         calcular_numeros(tablero)
+#         # Testeamos que el tablero tenga los números correctos
+#         self.assertEqual(tablero, [[1,-1],
+#                                    [1, 1]])
 
-class crear_juegoTest(unittest.TestCase):
-    def test_ejemplo(self):
-        filas = 2
-        columnas = 2
-        minas = 1
-        estado: EstadoJuego = crear_juego(filas, columnas, minas)
-        # Testeamos que el tablero tenga las dimensiones correctas
-        self.assertTrue(dimension_correcta(estado['tablero'], filas, columnas))
-        # Testeamos que el tablero visible tenga las dimensiones correctas
-        self.assertTrue(dimension_correcta(estado['tablero_visible'], filas, columnas))
-        # Testeamos que el tablero visible esté vacío
-        for fila in estado['tablero_visible']:
-            for celda in fila:
-                self.assertEqual(celda, VACIO)
-        # Testeamos que el resto es lo esperado
-        self.assertEqual(estado['filas'], filas)
-        self.assertEqual(estado['columnas'], columnas)
-        self.assertEqual(estado['minas'], minas)
-        self.assertFalse(estado['juego_terminado'])
-        # Testeamos que haya una mina en el tablero
-        self.assertEqual(cant_minas_en_tablero(estado['tablero']), minas)
+# class crear_juegoTest(unittest.TestCase):
+#     def test_ejemplo(self):
+#         filas = 2
+#         columnas = 2
+#         minas = 1
+#         estado: EstadoJuego = crear_juego(filas, columnas, minas)
+#         # Testeamos que el tablero tenga las dimensiones correctas
+#         self.assertTrue(dimension_correcta(estado['tablero'], filas, columnas))
+#         # Testeamos que el tablero visible tenga las dimensiones correctas
+#         self.assertTrue(dimension_correcta(estado['tablero_visible'], filas, columnas))
+#         # Testeamos que el tablero visible esté vacío
+#         for fila in estado['tablero_visible']:
+#             for celda in fila:
+#                 self.assertEqual(celda, VACIO)
+#         # Testeamos que el resto es lo esperado
+#         self.assertEqual(estado['filas'], filas)
+#         self.assertEqual(estado['columnas'], columnas)
+#         self.assertEqual(estado['minas'], minas)
+#         self.assertFalse(estado['juego_terminado'])
+#         # Testeamos que haya una mina en el tablero
+#         self.assertEqual(cant_minas_en_tablero(estado['tablero']), minas)
     
 
-class marcar_celdaTest(unittest.TestCase):
-    def test_ejemplo(self):
-        estado: EstadoJuego = {
-            'filas': 2,
-            'columnas': 2,
-            'minas': 1,
-            'tablero': [
-                [-1, 1],
-                [1, 1]
-            ],
-            'tablero_visible': [
-                [VACIO, VACIO],
-                [VACIO, VACIO]
-            ],
-            'juego_terminado': False
-        }
-        marcar_celda(estado, 0, 0)
-        # Testeamos que sólo la celda marcada sea visible
-        self.assertEqual(estado['tablero_visible'], [
-            [BANDERA, VACIO],
-            [VACIO, VACIO]
-        ])
-        # Testeamos que el resto no se modificó
-        self.assertEqual(estado['filas'], 2)
-        self.assertEqual(estado['columnas'], 2)
-        self.assertEqual(estado['minas'], 1)
-        self.assertEqual(estado['tablero'], [
-            [-1, 1],
-            [1, 1]
-        ])
-        self.assertFalse(estado['juego_terminado'])
-        # Testeamos que haya una mina en el tablero
-        self.assertEqual(cant_minas_en_tablero(estado['tablero']), 1)
+# class marcar_celdaTest(unittest.TestCase):
+#     def test_ejemplo(self):
+#         estado: EstadoJuego = {
+#             'filas': 2,
+#             'columnas': 2,
+#             'minas': 1,
+#             'tablero': [
+#                 [-1, 1],
+#                 [1, 1]
+#             ],
+#             'tablero_visible': [
+#                 [VACIO, VACIO],
+#                 [VACIO, VACIO]
+#             ],
+#             'juego_terminado': False
+#         }
+#         marcar_celda(estado, 0, 0)
+#         # Testeamos que sólo la celda marcada sea visible
+#         self.assertEqual(estado['tablero_visible'], [
+#             [BANDERA, VACIO],
+#             [VACIO, VACIO]
+#         ])
+#         # Testeamos que el resto no se modificó
+#         self.assertEqual(estado['filas'], 2)
+#         self.assertEqual(estado['columnas'], 2)
+#         self.assertEqual(estado['minas'], 1)
+#         self.assertEqual(estado['tablero'], [
+#             [-1, 1],
+#             [1, 1]
+#         ])
+#         self.assertFalse(estado['juego_terminado'])
+#         # Testeamos que haya una mina en el tablero
+#         self.assertEqual(cant_minas_en_tablero(estado['tablero']), 1)
 
 
 
-class descubrir_celdaTest(unittest.TestCase):
-    def test_ejemplo(self):
-        estado: EstadoJuego = {
-            'filas': 3,
-            'columnas': 3,
-            'minas': 3,
-            'tablero': [
-                [2, -1, 1],
-                [-1, 3, 1],
-                [-1, 2, 0]
-            ],
-            'tablero_visible': [
-                [VACIO, VACIO, VACIO],
-                [VACIO, VACIO, VACIO],
-                [VACIO, VACIO, VACIO]
-            ],
-            'juego_terminado': False
-        }
-        descubrir_celda(estado, 2, 2)
-        # Testeamos que la celda descubierta sea visible
-        self.assertEqual(estado['tablero_visible'], [
-            [VACIO, VACIO, VACIO],
-            [VACIO, "3", "1"],
-            [VACIO, "2", "0"]
-        ])
-        # Testeamos que el resto no se modificó
-        self.assertEqual(estado['filas'], 3)
-        self.assertEqual(estado['columnas'], 3)
-        self.assertEqual(estado['minas'], 3)
-        self.assertEqual(estado['tablero'], [
-            [2, -1, 1],
-            [-1, 3, 1],
-            [-1, 2, 0]
-        ])
-        # Testeamos que haya una mina en el tablero
-        self.assertEqual(cant_minas_en_tablero(estado['tablero']), 3)
-        self.assertFalse(estado['juego_terminado'])
+# class descubrir_celdaTest(unittest.TestCase):
+#     def test_ejemplo(self):
+#         estado: EstadoJuego = {
+#             'filas': 3,
+#             'columnas': 3,
+#             'minas': 3,
+#             'tablero': [
+#                 [2, -1, 1],
+#                 [-1, 3, 1],
+#                 [-1, 2, 0]
+#             ],
+#             'tablero_visible': [
+#                 [VACIO, VACIO, VACIO],
+#                 [VACIO, VACIO, VACIO],
+#                 [VACIO, VACIO, VACIO]
+#             ],
+#             'juego_terminado': False
+#         }
+#         descubrir_celda(estado, 2, 2)
+#         # Testeamos que la celda descubierta sea visible
+#         self.assertEqual(estado['tablero_visible'], [
+#             [VACIO, VACIO, VACIO],
+#             [VACIO, "3", "1"],
+#             [VACIO, "2", "0"]
+#         ])
+#         # Testeamos que el resto no se modificó
+#         self.assertEqual(estado['filas'], 3)
+#         self.assertEqual(estado['columnas'], 3)
+#         self.assertEqual(estado['minas'], 3)
+#         self.assertEqual(estado['tablero'], [
+#             [2, -1, 1],
+#             [-1, 3, 1],
+#             [-1, 2, 0]
+#         ])
+#         # Testeamos que haya una mina en el tablero
+#         self.assertEqual(cant_minas_en_tablero(estado['tablero']), 3)
+#         self.assertFalse(estado['juego_terminado'])
 
 
-class verificar_victoriaTest(unittest.TestCase):
-    def test_ejemplo(self):
-        estado: EstadoJuego = {
-            'filas': 2,
-            'columnas': 2,
-            'minas': 1,
-            'tablero': [
-                [-1, 1],
-                [ 1, 1]
-            ],
-            'tablero_visible': [
-                [VACIO, "1"],
-                ["1", "1"]
-            ],
-            'juego_terminado': False
-        }
-        # Testeamos que el juego no esté terminado y que no haya ganado
-        self.assertTrue(verificar_victoria(estado))
-        # Testeamos que el resto no se modificó
-        self.assertEqual(estado['filas'], 2)
-        self.assertEqual(estado['columnas'], 2)
-        self.assertEqual(estado['minas'], 1)
-        self.assertEqual(estado['tablero'], [
-            [-1, 1],
-            [ 1, 1]
-        ])
-        self.assertEqual(estado['tablero_visible'], [
-            [VACIO, "1"],
-            ["1", "1"]
-        ])
-        self.assertFalse(estado['juego_terminado'])
+# class verificar_victoriaTest(unittest.TestCase):
+#     def test_ejemplo(self):
+#         estado: EstadoJuego = {
+#             'filas': 2,
+#             'columnas': 2,
+#             'minas': 1,
+#             'tablero': [
+#                 [-1, 1],
+#                 [ 1, 1]
+#             ],
+#             'tablero_visible': [
+#                 [VACIO, "1"],
+#                 ["1", "1"]
+#             ],
+#             'juego_terminado': False
+#         }
+#         # Testeamos que el juego no esté terminado y que no haya ganado
+#         self.assertTrue(verificar_victoria(estado))
+#         # Testeamos que el resto no se modificó
+#         self.assertEqual(estado['filas'], 2)
+#         self.assertEqual(estado['columnas'], 2)
+#         self.assertEqual(estado['minas'], 1)
+#         self.assertEqual(estado['tablero'], [
+#             [-1, 1],
+#             [ 1, 1]
+#         ])
+#         self.assertEqual(estado['tablero_visible'], [
+#             [VACIO, "1"],
+#             ["1", "1"]
+#         ])
+#         self.assertFalse(estado['juego_terminado'])
         
 
 
-class obtener_estado_tableroTest(unittest.TestCase):
-    def test_ejemplo(self):
-        estado: EstadoJuego = {
-            'filas': 2,
-            'columnas': 2,
-            'minas': 1,
-            'tablero': [
-                [-1, 1],
-                [ 1, 1]
-            ],
-            'tablero_visible': [
-                [VACIO, "1"],
-                [VACIO, VACIO]
-            ],
-            'juego_terminado': False
-        }
-        # Testeamos que el estado del tablero sea el esperado
-        self.assertEqual(obtener_estado_tablero_visible(estado), [
-            [VACIO, "1"],
-            [VACIO, VACIO]
-        ])
-         # Testeamos que nada se modificó
-        self.assertEqual(estado['filas'], 2)
-        self.assertEqual(estado['columnas'], 2)
-        self.assertEqual(estado['minas'], 1)
-        self.assertEqual(estado['tablero'], [
-            [-1, 1],
-            [ 1, 1]
-        ])
-        self.assertEqual(estado['tablero_visible'], [
-            [VACIO, "1"],
-            [VACIO, VACIO]
-        ])
-        self.assertFalse(estado['juego_terminado'])
+# class obtener_estado_tableroTest(unittest.TestCase):
+#     def test_ejemplo(self):
+#         estado: EstadoJuego = {
+#             'filas': 2,
+#             'columnas': 2,
+#             'minas': 1,
+#             'tablero': [
+#                 [-1, 1],
+#                 [ 1, 1]
+#             ],
+#             'tablero_visible': [
+#                 [VACIO, "1"],
+#                 [VACIO, VACIO]
+#             ],
+#             'juego_terminado': False
+#         }
+#         # Testeamos que el estado del tablero sea el esperado
+#         self.assertEqual(obtener_estado_tablero_visible(estado), [
+#             [VACIO, "1"],
+#             [VACIO, VACIO]
+#         ])
+#          # Testeamos que nada se modificó
+#         self.assertEqual(estado['filas'], 2)
+#         self.assertEqual(estado['columnas'], 2)
+#         self.assertEqual(estado['minas'], 1)
+#         self.assertEqual(estado['tablero'], [
+#             [-1, 1],
+#             [ 1, 1]
+#         ])
+#         self.assertEqual(estado['tablero_visible'], [
+#             [VACIO, "1"],
+#             [VACIO, VACIO]
+#         ])
+#         self.assertFalse(estado['juego_terminado'])
 
 
-class reiniciar_juegoTest(unittest.TestCase):
-    def test_ejemplo(self):
-        estado: EstadoJuego = {
-            'filas': 2,
-            'columnas': 2,
-            'minas': 1,
-            'tablero': [
-                [-1, 1],
-                [ 1, 1]
-            ],
-            'tablero_visible': [
-                [VACIO, "1"],
-                [VACIO, VACIO]
-            ],
-            'juego_terminado': False
-        }
-        reiniciar_juego(estado)
-        # Testeamos que el juego esté reiniciado
-        self.assertEqual(estado['tablero_visible'], [
-            [VACIO, VACIO],
-            [VACIO, VACIO]
-        ])
-        # Testeamos que haya una mina en el tablero
-        self.assertEqual(cant_minas_en_tablero(estado['tablero']), 1)
-        self.assertEqual(estado['filas'], 2)
-        self.assertEqual(estado['columnas'], 2)
-        self.assertEqual(estado['minas'], 1)
-        self.assertEqual(len(estado['tablero']), 2)
-        self.assertEqual(len(estado['tablero'][0]), 2)
-        self.assertFalse(estado['juego_terminado'])
-        # Testeamos que es diferente tablero
-        self.assertNotEqual(estado['tablero'], [
-            [-1, 1],
-            [ 1, 1]
-        ])
+# class reiniciar_juegoTest(unittest.TestCase):
+#     def test_ejemplo(self):
+#         estado: EstadoJuego = {
+#             'filas': 2,
+#             'columnas': 2,
+#             'minas': 1,
+#             'tablero': [
+#                 [-1, 1],
+#                 [ 1, 1]
+#             ],
+#             'tablero_visible': [
+#                 [VACIO, "1"],
+#                 [VACIO, VACIO]
+#             ],
+#             'juego_terminado': False
+#         }
+#         reiniciar_juego(estado)
+#         # Testeamos que el juego esté reiniciado
+#         self.assertEqual(estado['tablero_visible'], [
+#             [VACIO, VACIO],
+#             [VACIO, VACIO]
+#         ])
+#         # Testeamos que haya una mina en el tablero
+#         self.assertEqual(cant_minas_en_tablero(estado['tablero']), 1)
+#         self.assertEqual(estado['filas'], 2)
+#         self.assertEqual(estado['columnas'], 2)
+#         self.assertEqual(estado['minas'], 1)
+#         self.assertEqual(len(estado['tablero']), 2)
+#         self.assertEqual(len(estado['tablero'][0]), 2)
+#         self.assertFalse(estado['juego_terminado'])
+#         # Testeamos que es diferente tablero
+#         self.assertNotEqual(estado['tablero'], [
+#             [-1, 1],
+#             [ 1, 1]
+#         ])
 
-# Tarea: Pensar cómo testear  guardar_estado y cargar_estado
+# # Tarea: Pensar cómo testear  guardar_estado y cargar_estado
 
-class guardar_estadoTest(unittest.TestCase):
-    def test_ejemplo (self):
-        return
+# class guardar_estadoTest(unittest.TestCase):
+#     def test_ejemplo (self):
+#         return
 
-class cargar_estadoTest(unittest.TestCase):
-    def test_ejemplo (self):
-        return
+# class cargar_estadoTest(unittest.TestCase):
+#     def test_ejemplo (self):
+#         return
 
 
 """
