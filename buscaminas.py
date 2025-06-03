@@ -255,6 +255,11 @@ def tablero_visible_valido(archivo_tablero_visible: TextIO, archivo_tablero: Tex
     res: bool = True
     tablero_visible = string_a_matriz(archivo_tablero_visible)
     tablero = string_a_matriz(archivo_tablero)
+    for f in range(len(tablero_visible)):
+        for c in range(len(tablero_visible[f])):
+            if tablero_visible[f][c] != '*' and tablero_visible[f][c] != '?' and tablero_visible[f][c] != tablero[f][c]:
+                res = False
+    
     return res
 
 
@@ -264,8 +269,8 @@ def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:
     if os.path.exists(generar_ruta(ruta_directorio, 'tablero.txt')) and os.path.exists(generar_ruta(ruta_directorio, 'tablero_visible.txt')):
         archivo_tablero: TextIO = open(generar_ruta(ruta_directorio, 'tablero.txt'), 'r')
         archivo_tablero_visible: TextIO  = open(generar_ruta(ruta_directorio, 'tablero_visible.txt'),'r')
-        if not dimensiones_validas(estado, archivo_tablero) or not dimensiones_validas(estado, archivo_tablero_visible):
-            res = False
+
+        res = dimensiones_validas(estado, archivo_tablero) and dimensiones_validas(estado, archivo_tablero_visible) and tablero_valido(archivo_tablero) and tablero_visible_valido(archivo_tablero_visible, archivo_tablero)
         
         archivo_tablero.close()
         archivo_tablero_visible.close()
