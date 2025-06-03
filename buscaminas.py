@@ -251,13 +251,10 @@ def tablero_valido(archivo: TextIO) -> bool:
                     res = False
     return (res and hayBomba)
 
-def tablero_visible_valido(archivo: TextIO) -> bool:
+def tablero_visible_valido(archivo_tablero_visible: TextIO, archivo_tablero: TextIO) -> bool:
     res: bool = True
-    texto: list[str] = archivo.readlines()
-    tablero_visible: list[list[int]] = []
-    for l in texto:
-        tablero_visible.append(l.split(","))
-    
+    tablero_visible = string_a_matriz(archivo_tablero_visible)
+    tablero = string_a_matriz(archivo_tablero)
     return res
 
 
