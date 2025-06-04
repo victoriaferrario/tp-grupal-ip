@@ -2,10 +2,12 @@ import unittest
 from buscaminas import (BOMBA, BANDERA, VACIO, EstadoJuego, 
                         colocar_minas, calcular_numeros, crear_juego, 
                         obtener_estado_tablero_visible,marcar_celda, descubrir_celda,
-                        verificar_victoria,reiniciar_juego)
+                        verificar_victoria,reiniciar_juego, guardar_estado,generar_ruta,
+                        generar_ruta, existe_archivo,string_a_matriz)
+from typing import TextIO
 
 
-#reiniciar_juego,  , guardar_estado, cargar_estado, )
+# cargar_estado
 
 
 '''
@@ -49,7 +51,6 @@ def dimension_correcta(tablero: list[list[int]], filas: int, columnas: int) -> b
         if len(fila) != columnas:
             return False
     return True
-
 
 
 """EJERCICIO 1"""
@@ -418,6 +419,8 @@ class descubrir_celdaTest(unittest.TestCase):
         self.assertEqual(cant_minas_en_tablero(estado['tablero']), 1)
         self.assertFalse(estado['juego_terminado'])
 
+
+""" EJERCICIO 7 """   
 class verificar_victoriaTest(unittest.TestCase):
     def test_ejemplo(self):
         estado: EstadoJuego = {
@@ -449,9 +452,9 @@ class verificar_victoriaTest(unittest.TestCase):
             ["1", "1"]
         ])
         self.assertFalse(estado['juego_terminado'])
-        
 
 
+""" EJERCICIO 8 """   
 class obtener_estado_tableroTest(unittest.TestCase):
     def test_ejemplo(self):
         estado: EstadoJuego = {
@@ -524,11 +527,44 @@ class reiniciar_juegoTest(unittest.TestCase):
             [ 1, 1]
         ])
 
-# # Tarea: Pensar cómo testear  guardar_estado y cargar_estado
+# #   guardar_estado y cargar_estado
 
-# class guardar_estadoTest(unittest.TestCase):
-#     def test_ejemplo (self):
-#         return
+
+""" EJERCICIO 9 """  
+def chequear_archivo_igual_tablero(ruta_directorio:str, nombre_archivo:str, tablero:list[list[int]]) -> bool:
+    archivo_tablero: TextIO = open(generar_ruta(ruta_directorio, nombre_archivo), 'r')
+    matriz_archivo = string_a_matriz(archivo_tablero)
+    res:bool = False
+    if matriz_archivo == tablero:
+        res = True
+    archivo_tablero.close()
+    return res 
+
+class guardar_estadoTest(unittest.TestCase):
+    def test_leer_archivo(self):
+        ruta_directorio:str = './'
+
+        estado: EstadoJuego = {'filas': 3,
+                'columnas': 3,
+                'minas': 1,
+                'tablero_visible': [["1", VACIO, VACIO], [VACIO, VACIO, VACIO], [VACIO, BANDERA, VACIO]],
+                'tablero': [[1, -1, 1], [1, 1, 1], [0, 0, 0]],
+                'juego_terminado': False}
+
+        guardar_estado(estado, ruta_directorio)
+
+        self.assertTrue(existe_archivo(ruta_directorio, 'tablero.txt'))
+        self.assertTrue(existe_archivo(ruta_directorio, 'tablero_visible.txt'))
+
+        self.assertTrue(chequear_archivo_igual_tablero(ruta_directorio, 'tablero.txt', estado['tablero']))
+        self.assertTrue(chequear_archivo_igual_tablero(ruta_directorio, 'tablero_visible.txt', estado['tablero_visible']))
+        
+
+
+    def test_ejemplo (self):
+        return
+
+
 
 # class cargar_estadoTest(unittest.TestCase):
 #     def test_ejemplo (self):
